@@ -1,6 +1,7 @@
 #include "item.h"
 #include <fstream>
 #include <iostream>
+#include <ostream>
 #include <sstream>
 #include <string>
 
@@ -26,11 +27,20 @@ ToDoList::~ToDoList() {
  * addItem adds an item to the linked list
  *
  * @param title Title of the todo list to be saved
+ * @param id Optional id parameter to set the id of the item if exists
  * @return void
  */
-void ToDoList::addItem(const std::string &title) {
+void ToDoList::addItem(const std::string &title, int id) {
   // create the new item pointer based on the new id and the title
-  ToDoItem *newItem = new ToDoItem{currentId++, title, nullptr};
+  // if id param exists, use it, otherwise iterate current id
+  // problem now is that it currentId is always 1, why ?
+  int newId;
+  if (id != 0) {
+    newId = id;
+  } else {
+    newId = currentId++;
+  }
+  ToDoItem *newItem = new ToDoItem{newId, title, nullptr};
 
   if (!head) {
     // if its the first item in the list, set the first item in the list to the
@@ -140,16 +150,13 @@ void ToDoList::loadFromFile() {
       id = std::stoi(line);     // Read the ID
       std::getline(iss, title); // Read the title
 
+      if (id >= currentId) {
+        currentId = id + 1;
+      }
       // Create a new item and add it to the list using the existing addItem
       // function
       ToDoItem *newItem = new ToDoItem{id, title, nullptr};
-
-      // Add the item to the list
-      addItem(title);
-
-      // Set the ID to be consistent with the one read from the file
-      currentId =
-          id + 1; // Ensure the next ID will be one higher than the current item
+      addItem(title, id);
     }
   }
 

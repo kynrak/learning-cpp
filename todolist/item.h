@@ -21,7 +21,7 @@ private:
 public:
   ToDoList();
   ~ToDoList();
-  void addItem(const std::string &title);
+  void addItem(const std::string &title, int id = 0);
   void deleteItem(int id);
   void displayItems() const;
 };
